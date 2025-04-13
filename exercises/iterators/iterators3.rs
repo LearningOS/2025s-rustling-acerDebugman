@@ -9,8 +9,6 @@
 // Execute `rustlings hint iterators3` or use the `hint` watch subcommand for a
 // hint.
 
-// I AM NOT DONE
-
 #[derive(Debug, PartialEq, Eq)]
 pub enum DivisionError {
     NotDivisible(NotDivisibleError),
@@ -26,23 +24,41 @@ pub struct NotDivisibleError {
 // Calculate `a` divided by `b` if `a` is evenly divisible by `b`.
 // Otherwise, return a suitable error.
 pub fn divide(a: i32, b: i32) -> Result<i32, DivisionError> {
-    todo!();
+    if b == 0 {
+        return Err(DivisionError::DivideByZero);
+    } 
+    let a = a as f32;
+    let b = b as f32;
+    let rem = a % b;
+    // if rem.abs() > 1e-10 {
+    if rem.abs() > f32::EPSILON {
+        return Err(DivisionError::NotDivisible(NotDivisibleError{dividend: a as i32, divisor: b as i32}));
+    }
+    Ok((a/b) as i32)
 }
 
 // Complete the function and return a value of the correct type so the test
 // passes.
 // Desired output: Ok([1, 11, 1426, 3])
-fn result_with_list() -> () {
+fn result_with_list() -> Result<Vec<i32>, DivisionError> {
     let numbers = vec![27, 297, 38502, 81];
-    let division_results = numbers.into_iter().map(|n| divide(n, 27));
+    // let division_results = numbers.into_iter().map(|n| divide(n, 27)).collect::<Vec<_>>();
+    // if division_results.iter().any(|x| x.is_err()) {
+    //     return Err(DivisionError::DivideByZero);
+    // }
+    // Ok(division_results.into_iter().map(|x| x.unwrap()).collect::<_>())
+
+    let division_results: Result<Vec<i32>,DivisionError> = numbers.into_iter().map(|n| divide(n, 27)).collect();
+    division_results
 }
 
 // Complete the function and return a value of the correct type so the test
 // passes.
 // Desired output: [Ok(1), Ok(11), Ok(1426), Ok(3)]
-fn list_of_results() -> () {
+fn list_of_results() -> Vec<Result<i32, DivisionError>> {
     let numbers = vec![27, 297, 38502, 81];
-    let division_results = numbers.into_iter().map(|n| divide(n, 27));
+    let division_results = numbers.into_iter().map(|n| divide(n, 27)).collect::<_>();
+    division_results
 }
 
 #[cfg(test)]
@@ -51,6 +67,7 @@ mod tests {
 
     #[test]
     fn test_success() {
+        println!("{:?}", divide(81, 9));
         assert_eq!(divide(81, 9), Ok(9));
     }
 
