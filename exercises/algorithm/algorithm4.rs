@@ -3,7 +3,6 @@
 	This problem requires you to implement a basic interface for a binary tree
 */
 
-//I AM NOT DONE
 use std::cmp::Ordering;
 use std::fmt::Debug;
 
@@ -50,13 +49,49 @@ where
 
     // Insert a value into the BST
     fn insert(&mut self, value: T) {
-        //TODO
+        fn _insert<T: Ord>(node: &mut Option<Box<TreeNode<T>>>, val: T) {
+            if node.as_ref().unwrap().value == val {
+                return ;
+            } else if val < node.as_ref().unwrap().value {
+                if node.as_ref().unwrap().left.is_none() {
+                    node.as_mut().unwrap().left = Some(Box::new(TreeNode::new(val)));
+                    return ;
+                }
+                _insert(&mut node.as_mut().unwrap().left, val); 
+            } else {
+                if node.as_ref().unwrap().right.is_none() {
+                    node.as_mut().unwrap().right = Some(Box::new(TreeNode::new(val)));
+                    return ;
+                }
+                _insert(&mut node.as_mut().unwrap().right, val); 
+            }
+        }
+        if self.root.is_none() {
+            self.root = Some(Box::new(TreeNode::new(value)));
+            return ;
+        }
+        _insert(&mut self.root, value);
     }
 
     // Search for a value in the BST
     fn search(&self, value: T) -> bool {
-        //TODO
-        true
+        fn _search<T: Ord>(node: &Option<Box<TreeNode<T>>>, val: &T) -> bool {
+            if node.is_none() {
+                return false;
+            }
+            if node.as_ref().unwrap().value == *val {
+                return true;
+            }
+            if _search(&node.as_ref().unwrap().left, val) {
+                return true;
+            }
+            if _search(&node.as_ref().unwrap().right, val) {
+                return true;
+            }
+            
+            false
+        }
+        _search(&self.root, &value)
     }
 }
 

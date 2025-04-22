@@ -2,7 +2,7 @@
 	heap
 	This question requires you to implement a binary heap function
 */
-// I AM NOT DONE
+#![feature(core_intrinsics)]
 
 use std::cmp::Ord;
 use std::default::Default;
@@ -37,7 +37,66 @@ where
     }
 
     pub fn add(&mut self, value: T) {
-        //TODO
+        self.count += 1;
+        if self.items.len() > self.count {
+            self.items[self.count] = value;    
+        } else {
+            self.items.push(value);
+        }
+        if self.count == 1 {
+            return ;
+        }
+        self.sift_up(self.count);
+    }
+
+    fn sift_up(&mut self, idx: usize) {
+        if idx == 1 {
+            return;
+        }
+        let parent = self.parent_idx(idx);
+        let best_child = self.best_child_idx(parent);
+        if (self.comparator)(&self.items[parent], &self.items[best_child]) {
+            return ;
+        }
+        self.items.swap(best_child, parent);
+        self.sift_up(parent);
+        // let (left, right) = (self.left_child_idx(parent), self.right_child_idx(parent));
+        // match ((self.comparator)(&self.items[parent], &self.items[left]), (self.comparator)(&self.items[parent], &self.items[right])) {
+        //     (true, true) => return,
+        //     (false, true) => {
+        //         self.items.swap(parent, left);
+        //         // self.sift_up(parent);
+        //     },
+        //     (true, false) => {
+        //         self.items.swap(parent, right);
+        //         // self.sift_up(parent);
+        //     },
+        //     (false, false) => {
+        //         let best_child = if (self.comparator)(&self.items[left], &self.items[right]) {
+        //             left
+        //         } else {
+        //             right
+        //         };
+        //         self.items.swap(parent, best_child);
+        //         // self.sift_up(parent);
+        //     },
+        // }
+        // self.sift_up(parent);
+    }
+
+    fn sift_down(&mut self, idx: usize) {
+        // let a = 10.0;
+        // let k = unsafe { log2f32(a) };
+        if !self.children_present(idx) {
+            return ;
+        }
+        let parent = idx;
+        let best_child = self.best_child_idx(parent);
+        if (self.comparator)(&self.items[parent], &self.items[best_child]) {
+            return; 
+        }
+        self.items.swap(parent, best_child);
+        self.sift_down(best_child);
     }
 
     fn parent_idx(&self, idx: usize) -> usize {
@@ -56,6 +115,18 @@ where
         self.left_child_idx(idx) + 1
     }
 
+    fn best_child_idx(&self, idx: usize) -> usize {
+        let (left, right) = (self.left_child_idx(idx), self.right_child_idx(idx));
+        if right > self.count {
+            return left;
+        }
+        if (self.comparator)(&self.items[left], &self.items[right]) {
+            left
+        } else {
+            right
+        }
+    }
+    //应该改为best, smallest 还是 biggest 都是comparator决定的
     fn smallest_child_idx(&self, idx: usize) -> usize {
         //TODO
 		0
@@ -79,13 +150,19 @@ where
 
 impl<T> Iterator for Heap<T>
 where
-    T: Default,
+    T: Default + Clone + Copy,
 {
     type Item = T;
 
     fn next(&mut self) -> Option<T> {
-        //TODO
-		None
+        if self.count == 0 {
+            return None;
+        }
+        let rs = Some(self.items[1]);
+        self.items.swap(1, self.count);
+        self.count -= 1;
+        self.sift_down(1);
+        rs
     }
 }
 
@@ -149,6 +226,7 @@ mod tests {
         assert_eq!(heap.next(), Some(9));
         assert_eq!(heap.next(), Some(4));
         heap.add(1);
+        // println!("{:?}", heap.items);
         assert_eq!(heap.next(), Some(2));
     }
 }

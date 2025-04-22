@@ -2,7 +2,8 @@
 	queue
 	This question requires you to use queues to implement the functionality of the stac
 */
-// I AM NOT DONE
+
+use std::ptr::NonNull;
 
 #[derive(Debug)]
 pub struct Queue<T> {
@@ -54,28 +55,44 @@ impl<T> Default for Queue<T> {
 
 pub struct myStack<T>
 {
-	//TODO
-	q1:Queue<T>,
-	q2:Queue<T>
+    size: u32,
+	q1: Queue<T>,
+	q2: Queue<T>,
 }
 impl<T> myStack<T> {
     pub fn new() -> Self {
         Self {
-			//TODO
-			q1:Queue::<T>::new(),
-			q2:Queue::<T>::new()
+            size: 0,
+			q1: Queue::<T>::new(),
+			q2: Queue::<T>::new()
         }
     }
     pub fn push(&mut self, elem: T) {
-        //TODO
+        self.size += 1;
+        //pop时候做也可以
+        let (source, target) = if !self.q1.is_empty() {
+            (&mut self.q1, &mut self.q2)
+        } else {
+            (&mut self.q2, &mut self.q1)
+        };
+        target.enqueue(elem); 
+        while !source.is_empty() {
+            let _ = source.dequeue().map(|x| target.enqueue(x));
+        }
     }
     pub fn pop(&mut self) -> Result<T, &str> {
-        //TODO
-		Err("Stack is empty")
+        if self.is_empty() {
+		    return Err("Stack is empty");
+        }
+        self.size -= 1;
+        if !self.q1.is_empty() {
+            self.q1.dequeue()
+        } else {
+            self.q2.dequeue()
+        }
     }
     pub fn is_empty(&self) -> bool {
-		//TODO
-        true
+        self.q1.is_empty() && self.q2.is_empty()
     }
 }
 
