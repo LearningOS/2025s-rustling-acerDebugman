@@ -4,9 +4,7 @@
 */
 
 use std::collections::HashSet;
-
-use super::algorithm8::Queue;
-use super::algorithm8::myStack;
+// use super::algorithm8::myStack;
 
 struct Graph {
     adj: Vec<Vec<usize>>, 
@@ -25,8 +23,8 @@ impl Graph {
     }
 
     fn dfs_util(&self, v: usize, visited: &mut HashSet<usize>, visit_order: &mut Vec<usize>) {
-        //TODO
-        let mut sk = myStack::new();
+        // let mut sk = myStack::new();
+        let mut sk = Vec::new();
         sk.push(v);
         while !sk.is_empty() {
             let s = sk.pop().unwrap();

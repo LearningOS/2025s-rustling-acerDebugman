@@ -128,8 +128,7 @@ where
     }
     //应该改为best, smallest 还是 biggest 都是comparator决定的
     fn smallest_child_idx(&self, idx: usize) -> usize {
-        //TODO
-		0
+        self.best_child_idx(idx)
     }
 }
 
