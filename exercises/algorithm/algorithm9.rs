@@ -2,7 +2,6 @@
 	heap
 	This question requires you to implement a binary heap function
 */
-#![feature(core_intrinsics)]
 
 use std::cmp::Ord;
 use std::default::Default;
@@ -85,8 +84,6 @@ where
     }
 
     fn sift_down(&mut self, idx: usize) {
-        // let a = 10.0;
-        // let k = unsafe { log2f32(a) };
         if !self.children_present(idx) {
             return ;
         }
@@ -225,7 +222,6 @@ mod tests {
         assert_eq!(heap.next(), Some(9));
         assert_eq!(heap.next(), Some(4));
         heap.add(1);
-        // println!("{:?}", heap.items);
         assert_eq!(heap.next(), Some(2));
     }
 }
